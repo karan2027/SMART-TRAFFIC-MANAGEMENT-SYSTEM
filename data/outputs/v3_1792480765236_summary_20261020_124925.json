@@ -1,0 +1,89 @@
+{
+  "cameraId": "CAM001",
+  "roadId": "ROAD001",
+  "analysisVersion": "1.0.0",
+  "video": {
+    "filename": "v3_1792480765236.mp4",
+    "durationSeconds": 15.32,
+    "fps": 25.0,
+    "width": 640,
+    "height": 360,
+    "totalFrames": 383
+  },
+  "performance": {
+    "processingDurationSeconds": 146.43,
+    "processingFps": 2.62
+  },
+  "vehicles": {
+    "total": 7,
+    "cars": 7,
+    "motorcycles": 0,
+    "buses": 0,
+    "trucks": 0
+  },
+  "traffic": {
+    "averageSpeedKmh": 11.8,
+    "averageFlowVehiclesPerHour": 1644.9,
+    "densityLevel": "LOW",
+    "congestionLevel": "LOW",
+    "directionData": {
+      "directionA": 5,
+      "directionB": 2
+    }
+  },
+  "outputs": {
+    "processedVideoFilename": "v3_1792480765236_processed_20261020_124925.mp4",
+    "processedVideoPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v3_1792480765236_processed_20261020_124925.mp4",
+    "summaryJsonPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v3_1792480765236_summary_20261020_124925.json"
+  },
+  "readings": [
+    {
+      "vehicles_counted_window": 6,
+      "traffic_flow_vph": 2160.0,
+      "density_level": "MODERATE",
+      "average_speed_kmh": 7.2,
+      "congestion_level": "HIGH",
+      "timestamp": "2026-10-20T12:51:05.457213",
+      "frame": 250,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 6,
+        "car": 6,
+        "motorcycle": 0,
+        "bus": 0,
+        "truck": 0,
+        "direction_a": 4,
+        "direction_b": 2
+      },
+      "directionCounts": {
+        "directionA": 4,
+        "directionB": 2
+      }
+    },
+    {
+      "vehicles_counted_window": 1,
+      "traffic_flow_vph": 360.0,
+      "density_level": "MODERATE",
+      "average_speed_kmh": 11.1,
+      "congestion_level": "HIGH",
+      "timestamp": "2026-10-20T12:51:52.085219",
+      "frame": 383,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 7,
+        "car": 7,
+        "motorcycle": 0,
+        "bus": 0,
+        "truck": 0,
+        "direction_a": 5,
+        "direction_b": 2
+      },
+      "directionCounts": {
+        "directionA": 5,
+        "directionB": 2
+      }
+    }
+  ]
+}

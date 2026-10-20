@@ -1,0 +1,89 @@
+{
+  "cameraId": "CAM001",
+  "roadId": "ROAD001",
+  "analysisVersion": "1.0.0",
+  "video": {
+    "filename": "traffic_road_01_1792481177829.mp4",
+    "durationSeconds": 12.0,
+    "fps": 30.0,
+    "width": 1280,
+    "height": 720,
+    "totalFrames": 360
+  },
+  "performance": {
+    "processingDurationSeconds": 161.64,
+    "processingFps": 2.23
+  },
+  "vehicles": {
+    "total": 23,
+    "cars": 2,
+    "motorcycles": 6,
+    "buses": 11,
+    "trucks": 4
+  },
+  "traffic": {
+    "averageSpeedKmh": 65.2,
+    "averageFlowVehiclesPerHour": 6900.0,
+    "densityLevel": "MODERATE",
+    "congestionLevel": "LOW",
+    "directionData": {
+      "directionA": 23,
+      "directionB": 0
+    }
+  },
+  "outputs": {
+    "processedVideoFilename": "traffic_road_01_1792481177829_processed_20261020_125617.mp4",
+    "processedVideoPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\traffic_road_01_1792481177829_processed_20261020_125617.mp4",
+    "summaryJsonPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\traffic_road_01_1792481177829_summary_20261020_125617.json"
+  },
+  "readings": [
+    {
+      "vehicles_counted_window": 21,
+      "traffic_flow_vph": 7560.0,
+      "density_level": "MODERATE",
+      "average_speed_kmh": 56.1,
+      "congestion_level": "LOW",
+      "timestamp": "2026-10-20T12:58:33.545515",
+      "frame": 300,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 21,
+        "car": 2,
+        "motorcycle": 6,
+        "bus": 10,
+        "truck": 3,
+        "direction_a": 21,
+        "direction_b": 0
+      },
+      "directionCounts": {
+        "directionA": 21,
+        "directionB": 0
+      }
+    },
+    {
+      "vehicles_counted_window": 2,
+      "traffic_flow_vph": 720.0,
+      "density_level": "LOW",
+      "average_speed_kmh": 43.8,
+      "congestion_level": "LOW",
+      "timestamp": "2026-10-20T12:58:59.601718",
+      "frame": 360,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 23,
+        "car": 2,
+        "motorcycle": 6,
+        "bus": 11,
+        "truck": 4,
+        "direction_a": 23,
+        "direction_b": 0
+      },
+      "directionCounts": {
+        "directionA": 23,
+        "directionB": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+video:
+  processing_fps: 15
+  frame_skip: 2
+  save_annotated_video: true
+  save_summary_json: true
+
+detection:
+  model_name: "yolov8n.pt"
+  confidence_threshold: 0.35
+  iou_threshold: 0.45
+  target_classes:
+    - 2  # car
+    - 3  # motorcycle
+    - 5  # bus
+    - 7  # truck
+
+tracking:
+  tracker_type: "bytetrack.yaml"
+  track_high_thresh: 0.4
+  track_low_thresh: 0.1
+  new_track_thresh: 0.4
+  track_buffer: 30
+  match_thresh: 0.8
+
+roi:
+  enabled: true
+  # Normalized polygon relative to frame width/height [x, y] (0.0 to 1.0)
+  # Default covers the main road surface area
+  polygon_normalized:
+    - [0.05, 0.20]
+    - [0.95, 0.20]
+    - [0.98, 0.98]
+    - [0.02, 0.98]
+
+counting_line:
+  enabled: true
+  # Normalized start and end points [x, y] (0.0 to 1.0)
+  line_normalized:
+    start: [0.10, 0.60]
+    end: [0.90, 0.60]
+  direction_a_label: "Inbound"
+  direction_b_label: "Outbound"
+
+speed:
+  enabled: true
+  is_calibrated: true
+  reference_distance_meters: 20.0
+  # Normalized calibration points on road plane [point1, point2]
+  calibration_points_normalized:
+    - [0.50, 0.40]
+    - [0.50, 0.70]
+
+traffic:
+  aggregation_interval_seconds: 10
+
+density_thresholds:
+  low_max: 5
+  moderate_max: 15
+  high_max: 25
+  # Above 25 is VERY_HIGH
+
+congestion_thresholds:
+  # Rule-based thresholds combining speed (km/h) and density
+  severe_speed_below: 15.0
+  high_speed_below: 30.0
+  moderate_speed_below: 45.0
