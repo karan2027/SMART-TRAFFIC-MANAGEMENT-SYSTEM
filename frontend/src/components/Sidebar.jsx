@@ -51,10 +51,10 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <div style={{ fontSize: '0.825rem', fontWeight: '700', color: 'var(--brand-accent)', letterSpacing: '0.01em', lineHeight: '1.3' }}>
+        <div className="sidebar-footer-title">
           Stage 1: Detection and Recognition
         </div>
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem', fontWeight: '500' }}>
+        <div className="sidebar-footer-desc">
           Recorded Video
         </div>
       </div>

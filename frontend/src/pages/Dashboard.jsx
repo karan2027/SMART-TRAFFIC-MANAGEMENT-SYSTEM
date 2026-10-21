@@ -233,37 +233,37 @@ const Dashboard = () => {
         <div style={{ height: '220px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={vehicleDistribution} margin={{ top: 25, right: 15, left: -15, bottom: 5 }}>
-              <CartesianGrid stroke="rgba(255, 255, 255, 0.06)" strokeDasharray="3 3" />
+              <CartesianGrid stroke="var(--border-subtle)" strokeDasharray="3 3" />
               <XAxis 
                 dataKey="name" 
-                stroke="#64748b" 
-                tick={{ fill: '#e2e8f0', fontSize: 13, fontWeight: 600 }} 
+                stroke="var(--text-subtle)" 
+                tick={{ fill: 'var(--text-secondary)', fontSize: 12, fontWeight: 600 }} 
                 tickLine={false} 
               />
               <YAxis 
-                stroke="#64748b" 
-                tick={{ fill: '#94a3b8', fontSize: 11 }} 
+                stroke="var(--text-subtle)" 
+                tick={{ fill: 'var(--text-muted)', fontSize: 11 }} 
                 tickLine={false} 
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#0f172a', 
-                  borderColor: 'rgba(255, 255, 255, 0.15)', 
-                  borderRadius: '8px',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-                  fontSize: '13px',
-                  color: '#f8fafc'
+                  backgroundColor: 'var(--bg-surface-elevated)', 
+                  borderColor: 'var(--border-medium)', 
+                  borderRadius: '6px',
+                  boxShadow: 'var(--shadow-md)',
+                  fontSize: '12px',
+                  color: 'var(--text-primary)'
                 }}
-                itemStyle={{ color: '#38bdf8', fontWeight: 600 }}
+                itemStyle={{ color: 'var(--brand-accent)', fontWeight: 600 }}
               />
-              <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 <LabelList 
                   dataKey="count" 
                   position="top" 
-                  fill="#f8fafc" 
-                  fontSize={13} 
+                  fill="var(--text-primary)" 
+                  fontSize={12} 
                   fontWeight={700} 
-                  offset={8} 
+                  offset={6} 
                 />
                 {vehicleDistribution.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />

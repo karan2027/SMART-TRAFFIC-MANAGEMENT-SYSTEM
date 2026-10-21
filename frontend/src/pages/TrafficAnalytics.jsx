@@ -96,7 +96,7 @@ const TrafficAnalytics = () => {
                       fontSize: '12px' 
                     }} 
                   />
-                  <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px', color: '#e2e8f0' }} />
+                  <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px', color: 'var(--text-secondary)' }} />
                   <Area type="monotone" dataKey="cars" name="Cars" stackId="1" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.4} />
                   <Area type="monotone" dataKey="bikes" name="Motorcycles" stackId="1" stroke="#c084fc" fill="#c084fc" fillOpacity={0.4} />
                   <Area type="monotone" dataKey="buses" name="Buses" stackId="1" stroke="#fbbf24" fill="#fbbf24" fillOpacity={0.4} />
