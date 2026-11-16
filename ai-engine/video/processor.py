@@ -93,6 +93,9 @@ class VideoProcessor:
         meta = self.validate_video(video_path)
         width, height, fps = meta['width'], meta['height'], meta['fps']
 
+        # Reset tracker and counter state cleanly for this video run
+        self.tracker.reset()
+
         # Setup ROI polygon pixel coordinates
         roi_norm = self.cfg['roi']['polygon_normalized']
         roi_poly = np.array([[int(p[0] * width), int(p[1] * height)] for p in roi_norm], dtype=np.int32)
@@ -180,8 +183,7 @@ class VideoProcessor:
                 is_tracking_frame = (frame_idx % frame_skip == 0 or frame_idx == 1)
 
                 if is_tracking_frame:
-                    detections = self.detector.detect(frame)
-                    tracked_objects = self.tracker.track_frame(frame, detections)
+                    tracked_objects = self.tracker.track_frame(frame)
 
                     # Update speeds and stationary status on tracking updates
                     for obj in tracked_objects:
@@ -269,11 +271,11 @@ class VideoProcessor:
                     cv2.circle(frame, obj['centroid'], 5, (255, 255, 255), 1)
 
                 # Current cumulative metrics
-                counts = counter.get_counts()
+                counts = counter.get_counts(tracker=self.tracker)
                 total_monitored_corridor = len(self.tracker.all_seen_tracks)
                 avg_frame_speed = float(np.mean(curr_frame_speeds)) if len(curr_frame_speeds) > 0 else 0.0
                 curr_density = self.analyzer.determine_density_level(active_in_roi)
-                curr_congestion = self.analyzer.determine_congestion_level(avg_frame_speed, curr_density)
+                curr_congestion = self.analyzer.determine_congestion_level(avg_frame_speed, curr_density) if active_in_roi > 0 else "LOW"
 
                 # 4. Draw Comprehensive 3-Line HUD Overlay (STMS Branding)
                 cv2.rectangle(frame, (0, 0), (width, 88), (14, 17, 23), -1)
@@ -301,8 +303,10 @@ class VideoProcessor:
 
                 # Aggregation Reading Interval Check (e.g. Every 10 seconds)
                 if frame_idx % agg_interval_frames == 0 or frame_idx == meta['frame_count']:
-                    window_crossings = counts['total'] - prev_counted_total
-                    prev_counted_total = counts['total']
+                    curr_counts = counter.get_counts(tracker=self.tracker)
+                    curr_corridor = self.tracker.get_corridor_summary(min_appearances=1)
+                    window_crossings = curr_counts['total'] - prev_counted_total
+                    prev_counted_total = curr_counts['total']
                     reading = self.analyzer.aggregate_reading(
                         interval_seconds=self.cfg['traffic']['aggregation_interval_seconds'],
                         new_crossings=window_crossings,
@@ -314,14 +318,21 @@ class VideoProcessor:
                         'frame': frame_idx,
                         'cameraId': camera_id,
                         'roadId': road_id,
-                        'cumulativeCounts': dict(counts),
+                        'cumulativeCounts': dict(curr_counts),
+                        'corridorCumulativeCounts': {
+                            'total': curr_corridor['total_unique'],
+                            'cars': curr_corridor['by_class']['car'],
+                            'motorcycles': curr_corridor['by_class']['motorcycle'],
+                            'buses': curr_corridor['by_class']['bus'],
+                            'trucks': curr_corridor['by_class']['truck']
+                        },
                         'directionCounts': {
-                            'directionA': counts['direction_a'],
-                            'directionB': counts['direction_b']
+                            'directionA': curr_counts['direction_a'],
+                            'directionB': curr_counts['direction_b']
                         },
                         'activeInRoi': active_in_roi,
                         'stationaryInRoi': stationary_in_roi,
-                        'uniqueMonitoredCorridor': total_monitored_corridor
+                        'uniqueMonitoredCorridor': curr_corridor['total_unique']
                     })
                     readings.append(reading)
 
@@ -336,7 +347,7 @@ class VideoProcessor:
         notify_progress(90, "Calculating traffic density and speed statistics...")
 
         processing_duration = round(time.time() - start_time, 2)
-        overall_counts = counter.get_counts()
+        overall_counts = counter.get_counts(tracker=self.tracker)
         overall_avg_speed = round(float(np.mean(all_speeds)), 1) if len(all_speeds) > 0 else 0.0
 
         # Calculate genuine spatial density across monitored corridor frames
@@ -344,8 +355,12 @@ class VideoProcessor:
         peak_roi_density = int(np.max(all_roi_active_counts)) if len(all_roi_active_counts) > 0 else 0
         final_density = self.analyzer.determine_density_level(avg_roi_density)
         final_congestion = self.analyzer.determine_congestion_level(overall_avg_speed, final_density)
+        if avg_roi_density == 0 or overall_counts['total'] == 0:
+            final_density = "LOW"
+            final_congestion = "LOW"
 
-        corridor_summary = self.tracker.get_corridor_summary()
+        # Confirm tracks with at least 2 appearances if video > 100 frames to suppress 1-frame spurious flickers
+        corridor_summary = self.tracker.get_corridor_summary(min_appearances=2 if meta['frame_count'] > 100 else 1)
         stationary_stats = speed_estimator.get_stationary_stats()
 
         notify_progress(93, "Encoding web-compatible H.264 video stream...")
@@ -409,6 +424,7 @@ class VideoProcessor:
                 'motorcycles': overall_counts['motorcycle'],
                 'buses': overall_counts['bus'],
                 'trucks': overall_counts['truck'],
+                'uniqueMonitoredTotal': corridor_summary['total_unique'],
                 'lineCrossings': {
                     'total': overall_counts['total'],
                     'cars': overall_counts['car'],

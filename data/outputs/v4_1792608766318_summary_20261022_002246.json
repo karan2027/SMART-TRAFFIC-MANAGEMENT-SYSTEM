@@ -1,0 +1,96 @@
+{
+  "cameraId": "CAM001",
+  "roadId": "ROAD001",
+  "analysisVersion": "1.0.0",
+  "video": {
+    "filename": "v4_1792608766318.mp4",
+    "durationSeconds": 4.5,
+    "fps": 30.0,
+    "width": 360,
+    "height": 640,
+    "totalFrames": 135
+  },
+  "performance": {
+    "processingDurationSeconds": 50.55,
+    "processingFps": 2.67
+  },
+  "vehicles": {
+    "total": 11,
+    "cars": 10,
+    "motorcycles": 0,
+    "buses": 1,
+    "trucks": 0,
+    "uniqueMonitoredTotal": 31,
+    "lineCrossings": {
+      "total": 11,
+      "cars": 10,
+      "motorcycles": 0,
+      "buses": 1,
+      "trucks": 0
+    },
+    "corridorMonitored": {
+      "total": 31,
+      "cars": 26,
+      "motorcycles": 0,
+      "buses": 5,
+      "trucks": 0
+    },
+    "stationaryVehiclesCount": 0,
+    "peakRoiDensity": 14,
+    "averageRoiDensity": 11
+  },
+  "traffic": {
+    "averageSpeedKmh": 23.3,
+    "averageFlowVehiclesPerHour": 8800.0,
+    "densityLevel": "MODERATE",
+    "congestionLevel": "MODERATE",
+    "peakRoiDensity": 14,
+    "averageRoiDensity": 11,
+    "stationaryCount": 0,
+    "directionData": {
+      "directionA": 11,
+      "directionB": 0
+    }
+  },
+  "outputs": {
+    "processedVideoFilename": "v4_1792608766318_processed_20261022_002246.mp4",
+    "processedVideoPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v4_1792608766318_processed_20261022_002246.mp4",
+    "summaryJsonPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v4_1792608766318_summary_20261022_002246.json"
+  },
+  "readings": [
+    {
+      "vehicles_counted_window": 11,
+      "traffic_flow_vph": 3960.0,
+      "density_level": "MODERATE",
+      "average_speed_kmh": 29.3,
+      "congestion_level": "MODERATE",
+      "timestamp": "2026-10-22T00:23:37.255672",
+      "frame": 135,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 11,
+        "car": 10,
+        "motorcycle": 0,
+        "bus": 1,
+        "truck": 0,
+        "direction_a": 11,
+        "direction_b": 0
+      },
+      "corridorCumulativeCounts": {
+        "total": 35,
+        "cars": 30,
+        "motorcycles": 0,
+        "buses": 5,
+        "trucks": 0
+      },
+      "directionCounts": {
+        "directionA": 11,
+        "directionB": 0
+      },
+      "activeInRoi": 10,
+      "stationaryInRoi": 0,
+      "uniqueMonitoredCorridor": 35
+    }
+  ]
+}

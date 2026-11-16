@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import logging
 
@@ -6,8 +7,8 @@ logger = logging.getLogger(__name__)
 class VehicleTracker:
     """
     Multi-Object Vehicle Tracker.
-    Primary: YOLO ByteTrack / BoT-SORT persistent tracking.
-    Fallback: Euclidean Centroid Distance Association for custom/motion detections.
+    Primary: YOLO ByteTrack / BoT-SORT persistent tracking with temporal class voting.
+    Fallback: Euclidean Centroid Distance Association for custom detections.
     """
 
     def __init__(self, model, tracker_config="bytetrack.yaml", conf_thresh=0.35, iou_thresh=0.45, target_classes=None):
@@ -26,6 +27,30 @@ class VehicleTracker:
         # Temporal Majority Class Voting & Lifetime Corridor Tracking
         self.class_votes = {} # track_id -> {cls_name: accumulated_conf}
         self.all_seen_tracks = {} # track_id -> {'stable_class': str, 'best_conf': float, 'appearances': int}
+
+        # Background subtractor for synthetic traffic animations
+        self.bg_subtractor = None
+        self.frame_count = 0
+
+    def reset(self):
+        """
+        Reset tracker state completely for a new video analysis session.
+        Prevents state leakage and count accumulation across multiple video runs.
+        """
+        self.next_fallback_id = 100
+        self.prev_centroids.clear()
+        self.disappeared.clear()
+        self.class_votes.clear()
+        self.all_seen_tracks.clear()
+        self.bg_subtractor = None
+        self.frame_count = 0
+
+        # Reset Ultralytics YOLO's internal tracker predictor if initialized
+        try:
+            if hasattr(self.model, 'predictor'):
+                self.model.predictor = None
+        except Exception as e:
+            logger.debug(f"Tracker predictor reset notice: {e}")
 
     def _update_class_stability(self, t_id, cls_name, conf=0.8):
         """
@@ -51,12 +76,30 @@ class VehicleTracker:
         self.all_seen_tracks[t_id]['stable_class'] = stable_class
         return stable_class
 
-    def get_corridor_summary(self):
+    def get_stable_class(self, t_id):
+        """
+        Return the temporally stabilized class for a track ID.
+        """
+        if t_id in self.all_seen_tracks:
+            return self.all_seen_tracks[t_id].get('stable_class', 'car')
+        return 'car'
+
+    def get_corridor_summary(self, min_appearances=1):
         """
         Return total unique vehicles monitored across the entire corridor and class breakdown.
+        min_appearances: Minimum detections required to confirm a valid track (filters out single-frame noise).
         """
+        valid_tracks = {
+            t_id: info for t_id, info in self.all_seen_tracks.items()
+            if info.get('appearances', 0) >= min_appearances
+        }
+
+        # If strict filtering leaves 0 tracks but tracks were seen, fall back to all tracks
+        if len(valid_tracks) == 0 and len(self.all_seen_tracks) > 0:
+            valid_tracks = self.all_seen_tracks
+
         summary = {
-            'total_unique': len(self.all_seen_tracks),
+            'total_unique': len(valid_tracks),
             'by_class': {
                 'car': 0,
                 'motorcycle': 0,
@@ -64,7 +107,7 @@ class VehicleTracker:
                 'truck': 0
             }
         }
-        for info in self.all_seen_tracks.values():
+        for info in valid_tracks.values():
             s_cls = info.get('stable_class', 'car')
             if s_cls in summary['by_class']:
                 summary['by_class'][s_cls] += 1
@@ -75,7 +118,8 @@ class VehicleTracker:
     def track_frame(self, frame, input_detections=None):
         """
         Track vehicles in a single frame.
-        input_detections: list of detections from VehicleDetector.detect(frame)
+        Primary: YOLO ByteTrack (for real CCTV video footage).
+        Fallback: Calibrated motion blob tracking (for synthetic top-down simulation video).
         """
         tracked_objects = []
 
@@ -120,7 +164,60 @@ class VehicleTracker:
         except Exception as e:
             logger.debug(f"YOLO track exception: {e}")
 
-        # Centroid Tracking Fallback for input_detections
+        # If external detections were provided, track them
+        if input_detections and len(input_detections) > 0:
+            return self._track_centroid(input_detections)
+
+        # Motion blob fallback for synthetic / animated traffic streams (e.g., top-down simulations)
+        if not hasattr(self, 'bg_subtractor') or self.bg_subtractor is None:
+            self.bg_subtractor = cv2.createBackgroundSubtractorMOG2(history=50, varThreshold=25, detectShadows=False)
+
+        fg = self.bg_subtractor.apply(frame)
+        self.frame_count = getattr(self, 'frame_count', 0) + 1
+
+        if self.frame_count > 3:
+            _, th = cv2.threshold(fg, 180, 255, cv2.THRESH_BINARY)
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+            dilated = cv2.dilate(th, kernel, iterations=2)
+            cnts, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            synthetic_detections = []
+            for c in cnts:
+                area = cv2.contourArea(c)
+                if area > 2000:
+                    x, y, w, h = cv2.boundingRect(c)
+                    if w > 25 and h > 35:
+                        aspect = float(h) / max(1.0, float(w))
+                        if area > 16000 or (area > 12000 and aspect > 2.0):
+                            cls_name = "bus"
+                            cls_id = 5
+                        elif area > 10000:
+                            cls_name = "truck"
+                            cls_id = 7
+                        elif area > 3500:
+                            cls_name = "car"
+                            cls_id = 2
+                        else:
+                            cls_name = "motorcycle"
+                            cls_id = 3
+
+                        synthetic_detections.append({
+                            'bbox': [float(x), float(y), float(x + w), float(y + h)],
+                            'confidence': 0.85,
+                            'class_id': cls_id,
+                            'class_name': cls_name
+                        })
+
+            if len(synthetic_detections) > 0:
+                return self._track_centroid(synthetic_detections)
+
+        return tracked_objects
+
+    def _track_centroid(self, input_detections):
+        """
+        Centroid tracking association for synthetic or custom detections.
+        """
+        tracked_objects = []
         if not input_detections or len(input_detections) == 0:
             return tracked_objects
 

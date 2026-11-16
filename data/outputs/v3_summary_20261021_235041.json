@@ -1,0 +1,130 @@
+{
+  "cameraId": "CAM001",
+  "roadId": "ROAD001",
+  "analysisVersion": "1.0.0",
+  "video": {
+    "filename": "v3.mp4",
+    "durationSeconds": 15.32,
+    "fps": 25.0,
+    "width": 640,
+    "height": 360,
+    "totalFrames": 383
+  },
+  "performance": {
+    "processingDurationSeconds": 112.3,
+    "processingFps": 3.41
+  },
+  "vehicles": {
+    "total": 0,
+    "cars": 0,
+    "motorcycles": 0,
+    "buses": 0,
+    "trucks": 0,
+    "uniqueMonitoredTotal": 0,
+    "lineCrossings": {
+      "total": 0,
+      "cars": 0,
+      "motorcycles": 0,
+      "buses": 0,
+      "trucks": 0
+    },
+    "corridorMonitored": {
+      "total": 0,
+      "cars": 0,
+      "motorcycles": 0,
+      "buses": 0,
+      "trucks": 0
+    },
+    "stationaryVehiclesCount": 0,
+    "peakRoiDensity": 0,
+    "averageRoiDensity": 0
+  },
+  "traffic": {
+    "averageSpeedKmh": 0.0,
+    "averageFlowVehiclesPerHour": 0.0,
+    "densityLevel": "LOW",
+    "congestionLevel": "MODERATE",
+    "peakRoiDensity": 0,
+    "averageRoiDensity": 0,
+    "stationaryCount": 0,
+    "directionData": {
+      "directionA": 0,
+      "directionB": 0
+    }
+  },
+  "outputs": {
+    "processedVideoFilename": "v3_processed_20261021_235041.mp4",
+    "processedVideoPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v3_processed_20261021_235041.mp4",
+    "summaryJsonPath": "D:\\SEMESTER\\Seventh(7th) Semester\\Project\\data\\outputs\\v3_summary_20261021_235041.json"
+  },
+  "readings": [
+    {
+      "vehicles_counted_window": 0,
+      "traffic_flow_vph": 0.0,
+      "density_level": "LOW",
+      "average_speed_kmh": 0.0,
+      "congestion_level": "MODERATE",
+      "timestamp": "2026-10-21T23:51:56.276028",
+      "frame": 250,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 0,
+        "car": 0,
+        "motorcycle": 0,
+        "bus": 0,
+        "truck": 0,
+        "direction_a": 0,
+        "direction_b": 0
+      },
+      "corridorCumulativeCounts": {
+        "total": 0,
+        "cars": 0,
+        "motorcycles": 0,
+        "buses": 0,
+        "trucks": 0
+      },
+      "directionCounts": {
+        "directionA": 0,
+        "directionB": 0
+      },
+      "activeInRoi": 0,
+      "stationaryInRoi": 0,
+      "uniqueMonitoredCorridor": 0
+    },
+    {
+      "vehicles_counted_window": 0,
+      "traffic_flow_vph": 0.0,
+      "density_level": "LOW",
+      "average_speed_kmh": 0.0,
+      "congestion_level": "MODERATE",
+      "timestamp": "2026-10-21T23:52:34.169824",
+      "frame": 383,
+      "cameraId": "CAM001",
+      "roadId": "ROAD001",
+      "cumulativeCounts": {
+        "total": 0,
+        "car": 0,
+        "motorcycle": 0,
+        "bus": 0,
+        "truck": 0,
+        "direction_a": 0,
+        "direction_b": 0
+      },
+      "corridorCumulativeCounts": {
+        "total": 0,
+        "cars": 0,
+        "motorcycles": 0,
+        "buses": 0,
+        "trucks": 0
+      },
+      "directionCounts": {
+        "directionA": 0,
+        "directionB": 0
+      },
+      "activeInRoi": 0,
+      "stationaryInRoi": 0,
+      "uniqueMonitoredCorridor": 0
+    }
+  ]
+}

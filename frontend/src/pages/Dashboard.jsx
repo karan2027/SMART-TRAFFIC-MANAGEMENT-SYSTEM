@@ -3,16 +3,25 @@ import { Car, Zap, Activity, Gauge, AlertTriangle, RefreshCw, Play, BarChart3, T
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, CartesianGrid, LabelList } from 'recharts';
 import MetricCard from '../components/MetricCard';
 import StatusBadge from '../components/StatusBadge';
+import { useTheme } from '../context/ThemeContext';
 import { getLatestReading, getTrafficSummary, getTrafficReadings, getAnalysisJobs } from '../services/api';
 
-const VEHICLE_COLORS = {
-  cars: '#38bdf8',        // Electric Cyan / Sky Blue (High contrast)
-  motorcycles: '#c084fc', // Vibrant Orchid / Violet
-  buses: '#fbbf24',       // Luminous Amber / Gold
-  trucks: '#f87171'       // Vivid Coral / Sunset Red
+const VEHICLE_COLORS_LIGHT = {
+  cars: '#16784A',        // Government Emerald
+  motorcycles: '#398A80', // Muted Teal
+  buses: '#E9A23B',       // Government Saffron
+  trucks: '#C2410C'       // Warm Terracotta / Rust
+};
+
+const VEHICLE_COLORS_DARK = {
+  cars: '#7BD69C',        // Fresh Emerald
+  motorcycles: '#86C8B9', // Teal Accent
+  buses: '#F1C36C',       // Saffron Accent
+  trucks: '#F6995C'       // Warm Orange Accent
 };
 
 const Dashboard = () => {
+  const { theme } = useTheme();
   const [summary, setSummary] = useState(null);
   const [readings, setReadings] = useState([]);
   const [latest, setLatest] = useState(null);
@@ -21,22 +30,35 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [videoSrc, setVideoSrc] = useState('/outputs/traffic_road_01_processed.mp4');
 
+  const vehicleColors = theme === 'dark' ? VEHICLE_COLORS_DARK : VEHICLE_COLORS_LIGHT;
+
   const fetchData = async (isManual = false) => {
     try {
       if (isManual) setRefreshing(true);
       else setLoading(true);
       setError(null);
 
-      const [sumRes, latestRes, readRes, jobsRes] = await Promise.all([
-        getTrafficSummary({ roadId: 'ROAD001' }),
-        getLatestReading({ roadId: 'ROAD001' }).catch(() => ({ data: null })),
-        getTrafficReadings({ roadId: 'ROAD001', limit: 20 }),
+      const [sumRes, jobsRes] = await Promise.all([
+        getTrafficSummary({ roadId: 'ROAD001' }).catch(() => ({ success: false })),
         getAnalysisJobs().catch(() => ({ data: [] }))
       ]);
 
       if (sumRes.success) setSummary(sumRes.data);
+
+      const activeJobId = sumRes.success && sumRes.data?.jobId ? sumRes.data.jobId : undefined;
+
+      const [latestRes, readRes] = await Promise.all([
+        getLatestReading({ roadId: 'ROAD001', jobId: activeJobId }).catch(() => ({ data: null })),
+        getTrafficReadings({ roadId: 'ROAD001', jobId: activeJobId, limit: 20 }).catch(() => ({ success: false, data: [] }))
+      ]);
+
       if (latestRes.data) setLatest(latestRes.data);
-      if (readRes.success) setReadings(readRes.data);
+      if (readRes.success && readRes.data && readRes.data.length > 0) {
+        setReadings(readRes.data);
+      } else if (activeJobId) {
+        const fallbackRead = await getTrafficReadings({ roadId: 'ROAD001', limit: 20 }).catch(() => ({ success: false, data: [] }));
+        if (fallbackRead.success) setReadings(fallbackRead.data);
+      }
 
       if (jobsRes?.data && jobsRes.data.length > 0) {
         const completed = jobsRes.data.find(j => j.status === 'completed' && (j.resultSummary?.outputs?.processedVideoFilename || j.processedVideoPath));
@@ -59,10 +81,10 @@ const Dashboard = () => {
   }, []);
 
   const vehicleDistribution = summary ? [
-    { name: 'Cars', count: (summary.corridorCounts?.cars ?? summary.vehicleCounts?.cars ?? 0), color: VEHICLE_COLORS.cars },
-    { name: 'Motorcycles', count: (summary.corridorCounts?.motorcycles ?? summary.vehicleCounts?.motorcycles ?? 0), color: VEHICLE_COLORS.motorcycles },
-    { name: 'Buses', count: (summary.corridorCounts?.buses ?? summary.vehicleCounts?.buses ?? 0), color: VEHICLE_COLORS.buses },
-    { name: 'Trucks', count: (summary.corridorCounts?.trucks ?? summary.vehicleCounts?.trucks ?? 0), color: VEHICLE_COLORS.trucks }
+    { name: 'Cars', count: (summary.corridorCounts?.cars ?? summary.vehicleCounts?.cars ?? 0), color: vehicleColors.cars },
+    { name: 'Motorcycles', count: (summary.corridorCounts?.motorcycles ?? summary.vehicleCounts?.motorcycles ?? 0), color: vehicleColors.motorcycles },
+    { name: 'Buses', count: (summary.corridorCounts?.buses ?? summary.vehicleCounts?.buses ?? 0), color: vehicleColors.buses },
+    { name: 'Trucks', count: (summary.corridorCounts?.trucks ?? summary.vehicleCounts?.trucks ?? 0), color: vehicleColors.trucks }
   ] : [];
 
   const chartData = readings.map((r, idx) => ({
@@ -114,24 +136,24 @@ const Dashboard = () => {
           value={summary?.corridorVehicles ?? summary?.totalVehicles ?? 0}
           subtext={`Line Crossings: ${summary?.totalVehicles ?? 0}`}
           icon={Car}
-          color="var(--brand-accent)"
+          color="var(--brand-primary)"
         />
         <MetricCard
           title="Average Speed"
           value={`${summary?.averageSpeedKmh ?? 0} km/h`}
           subtext="Calibrated road velocity"
           icon={Gauge}
-          color="var(--status-low-text)"
+          color="var(--brand-teal)"
         />
         <MetricCard
           title="Traffic Flow Rate"
           value={`${summary?.averageFlowVehiclesPerHour ?? 0}`}
           subtext={`Queue in ROI: ${summary?.activeInRoi ?? 0} veh`}
           icon={Zap}
-          color="var(--status-mod-text)"
+          color="var(--brand-saffron)"
         />
         <div className="glass-panel metric-card">
-          <div className="metric-icon" style={{ color: 'var(--brand-cyan)', backgroundColor: 'rgba(6, 182, 212, 0.12)', border: '1px solid rgba(6, 182, 212, 0.3)' }}>
+          <div className="metric-icon" style={{ color: 'var(--brand-teal)', backgroundColor: 'var(--bg-surface-mint)', border: '1px solid var(--border-medium)' }}>
             <Activity size={20} />
           </div>
           <div>
@@ -154,7 +176,7 @@ const Dashboard = () => {
         <div className="glass-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
             <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Play size={15} color="var(--brand-accent)" />
+              <Play size={15} color="var(--brand-primary)" />
               <span>Camera Stream & Overlays</span>
             </h3>
             {latest && (
@@ -190,7 +212,7 @@ const Dashboard = () => {
         {/* Traffic Flow & Speed Trend Chart */}
         <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <TrendingUp size={15} color="var(--brand-accent)" />
+            <TrendingUp size={15} color="var(--brand-primary)" />
             <span>Traffic Readings Over Time</span>
           </h3>
 
@@ -211,12 +233,13 @@ const Dashboard = () => {
                       borderColor: 'var(--border-medium)', 
                       borderRadius: '6px', 
                       color: 'var(--text-primary)',
-                      fontSize: '12px'
+                      fontSize: '12px',
+                      boxShadow: 'var(--shadow-md)'
                     }}
                   />
-                  <Line type="monotone" dataKey="vehicles" name="Vehicles Counted" stroke="var(--brand-accent)" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="speed" name="Avg Speed (km/h)" stroke="var(--status-low-text)" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="flow" name="Flow Rate (veh/hr)" stroke="var(--status-mod-text)" strokeWidth={2} strokeDasharray="3 3" />
+                  <Line type="monotone" dataKey="vehicles" name="Vehicles Counted" stroke={vehicleColors.cars} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="speed" name="Avg Speed (km/h)" stroke={vehicleColors.motorcycles} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="flow" name="Flow Rate (veh/hr)" stroke={vehicleColors.buses} strokeWidth={2} strokeDasharray="3 3" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -227,7 +250,7 @@ const Dashboard = () => {
       {/* Vehicle Category Distribution Bar Chart */}
       <div className="glass-panel">
         <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-          <BarChart3 size={15} color="var(--brand-accent)" />
+          <BarChart3 size={15} color="var(--brand-primary)" />
           <span>Vehicle Classification Breakdown ({summary?.corridorVehicles ?? summary?.totalVehicles ?? 0} Monitored Corridor Vehicles)</span>
         </h3>
         <div style={{ height: '220px' }}>
@@ -254,7 +277,7 @@ const Dashboard = () => {
                   fontSize: '12px',
                   color: 'var(--text-primary)'
                 }}
-                itemStyle={{ color: 'var(--brand-accent)', fontWeight: 600 }}
+                itemStyle={{ color: 'var(--brand-primary)', fontWeight: 600 }}
               />
               <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 <LabelList 

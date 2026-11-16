@@ -1,18 +1,23 @@
 import React from 'react';
 
-const MetricCard = ({ title, value, subtext, icon: Icon, color = '#0284c7' }) => {
+const MetricCard = ({ title, value, subtext, icon: Icon, color = 'var(--brand-primary)' }) => {
+  const isCssVar = typeof color === 'string' && color.startsWith('var(');
+  const iconStyle = isCssVar
+    ? {
+        color: color,
+        backgroundColor: 'var(--bg-surface-mint)',
+        border: '1px solid var(--border-medium)'
+      }
+    : {
+        color,
+        backgroundColor: `${color}18`,
+        border: `1px solid ${color}35`
+      };
+
   return (
     <div className="glass-panel metric-card">
       {Icon && (
-        <div 
-          className="metric-icon" 
-          style={{ 
-            color, 
-            backgroundColor: `${color}18`, 
-            border: `1px solid ${color}35` 
-          }}
-          aria-hidden="true"
-        >
+        <div className="metric-icon" style={iconStyle} aria-hidden="true">
           <Icon size={20} />
         </div>
       )}

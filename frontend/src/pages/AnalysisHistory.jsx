@@ -59,7 +59,7 @@ const AnalysisHistory = () => {
 
       <div className="glass-panel">
         <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-          <History size={15} color="var(--brand-accent)" />
+          <History size={15} color="var(--brand-primary)" />
           <span>Recorded Execution Runs ({jobs.length})</span>
         </h3>
 
@@ -90,7 +90,7 @@ const AnalysisHistory = () => {
 
                   return (
                     <tr key={job._id || job.jobId}>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--brand-accent)', fontWeight: '700' }}>
+                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.775rem', color: 'var(--brand-primary)', fontWeight: '700' }}>
                         {job.jobId}
                       </td>
                       <td style={{ fontWeight: '600', color: 'var(--text-primary)' }}>
@@ -120,8 +120,8 @@ const AnalysisHistory = () => {
                           </span>
                         )}
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: '700' }}>
-                        {sum?.vehicles?.total ?? '-'}
+                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-primary)' }}>
+                        {sum?.vehicles?.corridorMonitored?.total ?? sum?.vehicles?.uniqueMonitoredTotal ?? sum?.vehicles?.total ?? '-'}
                       </td>
                       <td style={{ fontFamily: 'var(--font-mono)' }}>
                         {sum?.traffic?.averageSpeedKmh ? `${sum.traffic.averageSpeedKmh} km/h` : '-'}

@@ -111,7 +111,7 @@ const VideoAnalysis = () => {
         {/* Left Control Panel */}
         <div className="glass-panel">
           <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Cpu size={16} color="var(--brand-accent)" />
+            <Cpu size={16} color="var(--brand-primary)" />
             <span>Analysis Parameters</span>
           </h3>
 
@@ -163,7 +163,7 @@ const VideoAnalysis = () => {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') fileInputRef.current?.click(); }}
               >
-                <Upload size={24} color="var(--brand-accent)" style={{ margin: '0 auto 0.5rem auto', display: 'block' }} />
+                <Upload size={24} color="var(--brand-primary)" style={{ margin: '0 auto 0.5rem auto', display: 'block' }} />
                 <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.825rem' }}>
                   Click to select video
                 </div>
@@ -174,7 +174,7 @@ const VideoAnalysis = () => {
             ) : (
               <div style={{ padding: '0.75rem', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <FileVideo size={18} color="var(--brand-accent)" />
+                  <FileVideo size={18} color="var(--brand-primary)" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {uploadFile.name}
@@ -297,7 +297,7 @@ const VideoAnalysis = () => {
                     </div>
                     <div>
                       <div className="metric-label" title="Vehicles that crossed the virtual counting line">Line Crossings</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--brand-cyan)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--brand-teal)', fontFamily: 'var(--font-mono)' }}>
                         {summary.vehicles?.lineCrossings?.total ?? summary.vehicles?.total}
                       </div>
                       <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Cordon flow count</div>
@@ -331,15 +331,15 @@ const VideoAnalysis = () => {
                   </div>
 
                   {/* Vehicle Class Breakdown Tag Pill Strip */}
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', padding: '0.5rem 0.75rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', padding: '0.5rem 0.75rem', background: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.75rem', alignItems: 'center' }}>
                     <span style={{ fontWeight: '600', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Vehicle Breakdown:</span>
-                    <span style={{ color: '#38bdf8' }}>Cars: <strong>{summary.vehicles?.corridorMonitored?.cars ?? summary.vehicles?.cars ?? 0}</strong></span>
+                    <span style={{ color: 'var(--color-cars)' }}>Cars: <strong>{summary.vehicles?.corridorMonitored?.cars ?? summary.vehicles?.cars ?? 0}</strong></span>
                     <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                    <span style={{ color: '#a78bfa' }}>Motorcycles: <strong>{summary.vehicles?.corridorMonitored?.motorcycles ?? summary.vehicles?.motorcycles ?? 0}</strong></span>
+                    <span style={{ color: 'var(--color-motorcycles)' }}>Motorcycles: <strong>{summary.vehicles?.corridorMonitored?.motorcycles ?? summary.vehicles?.motorcycles ?? 0}</strong></span>
                     <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                    <span style={{ color: '#fbbf24' }}>Buses: <strong>{summary.vehicles?.corridorMonitored?.buses ?? summary.vehicles?.buses ?? 0}</strong></span>
+                    <span style={{ color: 'var(--color-buses)' }}>Buses: <strong>{summary.vehicles?.corridorMonitored?.buses ?? summary.vehicles?.buses ?? 0}</strong></span>
                     <span style={{ color: 'var(--border-subtle)' }}>•</span>
-                    <span style={{ color: '#f87171' }}>Trucks: <strong>{summary.vehicles?.corridorMonitored?.trucks ?? summary.vehicles?.trucks ?? 0}</strong></span>
+                    <span style={{ color: 'var(--color-trucks)' }}>Trucks: <strong>{summary.vehicles?.corridorMonitored?.trucks ?? summary.vehicles?.trucks ?? 0}</strong></span>
                   </div>
                 </div>
               )}

@@ -50,6 +50,10 @@ class TrafficAnalyzer:
         Rule-based decision logic for traffic congestion level.
         Levels: LOW, MODERATE, HIGH, SEVERE
         """
+        # If density is LOW (zero or sparse vehicles), the road is uncongested
+        if density_level == "LOW":
+            return "LOW"
+
         speed = float(avg_speed_kmh)
         sev_thresh = self.congestion_thresholds.get('severe_speed_below', 15.0)
         high_thresh = self.congestion_thresholds.get('high_speed_below', 30.0)
@@ -62,7 +66,7 @@ class TrafficAnalyzer:
             elif density_level == "MODERATE":
                 return "HIGH"
             else:
-                return "MODERATE"
+                return "LOW"
 
         # Slow-moving Congested Traffic (15 - 30 km/h)
         elif speed < high_thresh:
@@ -102,7 +106,10 @@ class TrafficAnalyzer:
 
         flow_vph = self.calculate_flow_rate(new_crossings, interval_seconds)
         density = self.determine_density_level(active_in_roi)
-        congestion = self.determine_congestion_level(avg_speed, density)
+        if active_in_roi == 0:
+            congestion = "LOW"
+        else:
+            congestion = self.determine_congestion_level(avg_speed, density)
 
         return {
             'vehicles_counted_window': new_crossings,

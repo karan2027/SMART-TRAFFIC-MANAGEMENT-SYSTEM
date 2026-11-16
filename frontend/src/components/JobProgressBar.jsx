@@ -5,7 +5,7 @@ const JobProgressBar = ({ progress = 0, status = 'processing', stageMessage = ''
   const getStatusColor = () => {
     if (status === 'completed') return 'var(--status-low-text)';
     if (status === 'failed') return 'var(--status-severe-text)';
-    return 'var(--brand-accent)';
+    return 'var(--brand-primary)';
   };
 
   const pct = Math.min(100, Math.max(0, Math.round(progress)));
@@ -14,7 +14,7 @@ const JobProgressBar = ({ progress = 0, status = 'processing', stageMessage = ''
     <div style={{ margin: '1rem 0' }} role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.825rem', marginBottom: '0.45rem', fontWeight: '600' }}>
         <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-          {status === 'processing' && <Loader2 size={14} className="animate-spin" color="var(--brand-accent)" />}
+          {status === 'processing' && <Loader2 size={14} className="animate-spin" color="var(--brand-primary)" />}
           {status === 'completed' && <CheckCircle2 size={14} color="var(--status-low-text)" />}
           {status === 'failed' && <AlertTriangle size={14} color="var(--status-severe-text)" />}
           <span>Pipeline State: <strong style={{ color: getStatusColor() }}>{status}</strong></span>
@@ -39,7 +39,7 @@ const JobProgressBar = ({ progress = 0, status = 'processing', stageMessage = ''
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.45rem', fontSize: '0.775rem', color: 'var(--text-muted)' }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
           {status === 'processing' && (
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--brand-accent)', display: 'inline-block' }}></span>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--brand-primary)', display: 'inline-block' }}></span>
           )}
           <span>{stageMessage || (status === 'completed' ? 'Processing finished' : 'Preparing execution...')}</span>
         </span>

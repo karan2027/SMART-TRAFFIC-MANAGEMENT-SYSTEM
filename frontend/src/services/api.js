@@ -18,27 +18,30 @@ export const getCameras = async (roadId = null) => {
   return res.data;
 };
 
-export const getTrafficReadings = async ({ roadId, cameraId, limit = 50 } = {}) => {
+export const getTrafficReadings = async ({ roadId, cameraId, jobId, limit = 50 } = {}) => {
   const params = {};
   if (roadId) params.roadId = roadId;
   if (cameraId) params.cameraId = cameraId;
+  if (jobId) params.jobId = jobId;
   if (limit) params.limit = limit;
   const res = await axios.get(`${API_BASE}/traffic/readings`, { params });
   return res.data;
 };
 
-export const getLatestReading = async ({ roadId, cameraId } = {}) => {
+export const getLatestReading = async ({ roadId, cameraId, jobId } = {}) => {
   const params = {};
   if (roadId) params.roadId = roadId;
   if (cameraId) params.cameraId = cameraId;
+  if (jobId) params.jobId = jobId;
   const res = await axios.get(`${API_BASE}/traffic/latest`, { params });
   return res.data;
 };
 
-export const getTrafficSummary = async ({ roadId, cameraId } = {}) => {
+export const getTrafficSummary = async ({ roadId, cameraId, jobId } = {}) => {
   const params = {};
   if (roadId) params.roadId = roadId;
   if (cameraId) params.cameraId = cameraId;
+  if (jobId) params.jobId = jobId;
   const res = await axios.get(`${API_BASE}/traffic/summary`, { params });
   return res.data;
 };

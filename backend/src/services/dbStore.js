@@ -90,9 +90,10 @@ class DBStore {
   }
 
   // TRAFFIC READINGS
-  static async getReadings({ roadId, cameraId, start, end, limit = 100 }) {
+  static async getReadings({ roadId, cameraId, jobId, start, end, limit = 100 }) {
     if (isDbConnected()) {
       const filter = {};
+      if (jobId) filter.jobId = jobId;
       if (roadId) filter.roadId = roadId;
       if (cameraId) filter.cameraId = cameraId;
       if (start || end) {
@@ -105,19 +106,22 @@ class DBStore {
     }
 
     let list = [...memoryStore.trafficReadings];
+    if (jobId) list = list.filter(r => r.jobId === jobId);
     if (roadId) list = list.filter(r => r.roadId === roadId);
     if (cameraId) list = list.filter(r => r.cameraId === cameraId);
     return list.slice(-parseInt(limit, 10));
   }
 
-  static async getLatestReading({ roadId, cameraId }) {
+  static async getLatestReading({ roadId, cameraId, jobId }) {
     if (isDbConnected()) {
       const filter = {};
+      if (jobId) filter.jobId = jobId;
       if (roadId) filter.roadId = roadId;
       if (cameraId) filter.cameraId = cameraId;
       return await TrafficReading.findOne(filter).sort({ timestamp: -1 });
     }
     let list = [...memoryStore.trafficReadings];
+    if (jobId) list = list.filter(r => r.jobId === jobId);
     if (roadId) list = list.filter(r => r.roadId === roadId);
     if (cameraId) list = list.filter(r => r.cameraId === cameraId);
     return list.length > 0 ? list[list.length - 1] : null;
@@ -145,6 +149,21 @@ class DBStore {
       return await AnalysisJob.findOne({ jobId });
     }
     return memoryStore.analysisJobs.find(j => j.jobId === jobId) || null;
+  }
+
+  static async getLatestCompletedJob({ roadId, cameraId, jobId } = {}) {
+    if (isDbConnected()) {
+      const filter = { status: 'completed' };
+      if (jobId) filter.jobId = jobId;
+      if (roadId) filter.roadId = roadId;
+      if (cameraId) filter.cameraId = cameraId;
+      return await AnalysisJob.findOne(filter).sort({ completedAt: -1, createdAt: -1 });
+    }
+    let list = memoryStore.analysisJobs.filter(j => j.status === 'completed');
+    if (jobId) list = list.filter(j => j.jobId === jobId);
+    if (roadId) list = list.filter(j => j.roadId === roadId);
+    if (cameraId) list = list.filter(j => j.cameraId === cameraId);
+    return list.length > 0 ? list[0] : null;
   }
 
   static async createJob(data) {

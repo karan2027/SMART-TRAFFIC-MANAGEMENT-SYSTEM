@@ -123,43 +123,53 @@ exports.startAnalysis = async (req, res, next) => {
 
         // Save aggregated readings
         if (result && result.readings && Array.isArray(result.readings)) {
-          const corridorCounts = result.vehicles?.corridorMonitored || {
-            total: result.vehicles?.total || 0,
-            cars: result.vehicles?.cars || 0,
-            motorcycles: result.vehicles?.motorcycles || 0,
-            buses: result.vehicles?.buses || 0,
-            trucks: result.vehicles?.trucks || 0
-          };
+          const docReadings = result.readings.map(r => {
+            const lineCounts = r.cumulativeCounts || {
+              total: result.vehicles?.total || 0,
+              car: result.vehicles?.cars || 0,
+              motorcycle: result.vehicles?.motorcycles || 0,
+              bus: result.vehicles?.buses || 0,
+              truck: result.vehicles?.trucks || 0
+            };
 
-          const docReadings = result.readings.map(r => ({
-            jobId,
-            cameraId,
-            roadId,
-            timestamp: r.timestamp ? new Date(r.timestamp) : new Date(),
-            vehicleCounts: {
-              total: r.cumulativeCounts ? r.cumulativeCounts.total : result.vehicles.total,
-              cars: r.cumulativeCounts ? r.cumulativeCounts.car : result.vehicles.cars,
-              motorcycles: r.cumulativeCounts ? r.cumulativeCounts.motorcycle : result.vehicles.motorcycles,
-              buses: r.cumulativeCounts ? r.cumulativeCounts.bus : result.vehicles.buses,
-              trucks: r.cumulativeCounts ? r.cumulativeCounts.truck : result.vehicles.trucks
-            },
-            corridorCounts: {
-              total: r.uniqueMonitoredCorridor || corridorCounts.total,
-              cars: corridorCounts.cars,
-              motorcycles: corridorCounts.motorcycles,
-              buses: corridorCounts.buses,
-              trucks: corridorCounts.trucks
-            },
-            activeInRoi: r.activeInRoi !== undefined ? r.activeInRoi : (result.vehicles?.averageRoiDensity || 0),
-            stationaryCount: r.stationaryInRoi !== undefined ? r.stationaryInRoi : (result.vehicles?.stationaryVehiclesCount || 0),
-            averageSpeedKmh: r.average_speed_kmh || result.traffic.averageSpeedKmh,
-            trafficFlowVehiclesPerHour: r.traffic_flow_vph || result.traffic.averageFlowVehiclesPerHour,
-            densityLevel: r.density_level || result.traffic.densityLevel,
-            congestionLevel: r.congestion_level || result.traffic.congestionLevel,
-            directionData: r.directionCounts || { directionA: 0, directionB: 0 },
-            source: 'video',
-            analysisVersion: '1.0.0'
-          }));
+            const corridorRunning = r.corridorCumulativeCounts || {
+              total: r.uniqueMonitoredCorridor || result.vehicles?.corridorMonitored?.total || 0,
+              cars: result.vehicles?.corridorMonitored?.cars || 0,
+              motorcycles: result.vehicles?.corridorMonitored?.motorcycles || 0,
+              buses: result.vehicles?.corridorMonitored?.buses || 0,
+              trucks: result.vehicles?.corridorMonitored?.trucks || 0
+            };
+
+            return {
+              jobId,
+              cameraId,
+              roadId,
+              timestamp: r.timestamp ? new Date(r.timestamp) : new Date(),
+              vehicleCounts: {
+                total: lineCounts.total !== undefined ? lineCounts.total : 0,
+                cars: (lineCounts.car !== undefined ? lineCounts.car : lineCounts.cars) || 0,
+                motorcycles: (lineCounts.motorcycle !== undefined ? lineCounts.motorcycle : lineCounts.motorcycles) || 0,
+                buses: (lineCounts.bus !== undefined ? lineCounts.bus : lineCounts.buses) || 0,
+                trucks: (lineCounts.truck !== undefined ? lineCounts.truck : lineCounts.trucks) || 0
+              },
+              corridorCounts: {
+                total: corridorRunning.total || 0,
+                cars: corridorRunning.cars || 0,
+                motorcycles: corridorRunning.motorcycles || 0,
+                buses: corridorRunning.buses || 0,
+                trucks: corridorRunning.trucks || 0
+              },
+              activeInRoi: r.activeInRoi !== undefined ? r.activeInRoi : (result.vehicles?.averageRoiDensity || 0),
+              stationaryCount: r.stationaryInRoi !== undefined ? r.stationaryInRoi : (result.vehicles?.stationaryVehiclesCount || 0),
+              averageSpeedKmh: r.average_speed_kmh || result.traffic.averageSpeedKmh,
+              trafficFlowVehiclesPerHour: r.traffic_flow_vph || result.traffic.averageFlowVehiclesPerHour,
+              densityLevel: r.density_level || result.traffic.densityLevel,
+              congestionLevel: r.congestion_level || result.traffic.congestionLevel,
+              directionData: r.directionCounts || { directionA: 0, directionB: 0 },
+              source: 'video',
+              analysisVersion: '1.0.0'
+            };
+          });
 
           await DBStore.insertReadings(docReadings);
           console.log(`[BACKEND] Saved ${docReadings.length} traffic readings to Database Store for Job ${jobId}`);

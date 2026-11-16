@@ -79,7 +79,7 @@ const RoadDetails = () => {
         {/* Corridor Selector List */}
         <div className="glass-panel">
           <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <MapPin size={15} color="var(--brand-accent)" />
+            <MapPin size={15} color="var(--brand-primary)" />
             <span>Active Corridors ({roads.length})</span>
           </h3>
 
@@ -94,9 +94,10 @@ const RoadDetails = () => {
                     textAlign: 'left',
                     padding: '0.75rem 0.85rem',
                     borderRadius: 'var(--radius-md)',
-                    background: isSelected ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-surface-elevated)',
-                    border: `1px solid ${isSelected ? 'rgba(2, 132, 199, 0.4)' : 'var(--border-subtle)'}`,
-                    color: isSelected ? 'var(--brand-accent)' : 'var(--text-secondary)',
+                    background: isSelected ? 'var(--bg-surface-mint)' : 'var(--bg-surface-elevated)',
+                    border: `1px solid ${isSelected ? 'var(--border-medium)' : 'var(--border-subtle)'}`,
+                    color: isSelected ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                    fontWeight: isSelected ? '600' : '500',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
@@ -128,7 +129,7 @@ const RoadDetails = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
                 <div>
                   <div className="metric-label">Corridor Code</div>
-                  <div style={{ fontSize: '1rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-accent)', marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)', marginTop: '0.2rem' }}>
                     {selectedRoad.roadId}
                   </div>
                 </div>
@@ -156,7 +157,7 @@ const RoadDetails = () => {
             {/* Associated CCTV Cameras Table */}
             <div className="glass-panel">
               <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <CameraIcon size={15} color="var(--brand-accent)" />
+                <CameraIcon size={15} color="var(--brand-primary)" />
                 <span>Associated Monitoring Cameras ({assignedCameras.length})</span>
               </h3>
 
@@ -180,7 +181,7 @@ const RoadDetails = () => {
                     <tbody>
                       {assignedCameras.map(c => (
                         <tr key={c.cameraId}>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-accent)' }}>
+                          <td style={{ fontFamily: 'var(--font-mono)', fontWeight: '700', color: 'var(--brand-primary)' }}>
                             {c.cameraId}
                           </td>
                           <td style={{ fontWeight: '600' }}>{c.name}</td>
@@ -213,19 +214,19 @@ const RoadDetails = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                   <div>
                     <div className="metric-label">Vehicles in Field</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-accent)' }}>
-                      {latestReading.vehicleCounts?.total}
+                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>
+                      {latestReading.activeInRoi !== undefined ? latestReading.activeInRoi : (latestReading.corridorCounts?.total ?? latestReading.vehicleCounts?.total ?? 0)}
                     </div>
                   </div>
                   <div>
                     <div className="metric-label">Observed Speed</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--status-low-text)' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-teal)' }}>
                       {latestReading.averageSpeedKmh} km/h
                     </div>
                   </div>
                   <div>
                     <div className="metric-label">Calculated Flow</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--status-mod-text)' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: '700', fontFamily: 'var(--font-mono)', color: 'var(--brand-saffron)' }}>
                       {latestReading.trafficFlowVehiclesPerHour} veh/h
                     </div>
                   </div>

@@ -33,6 +33,21 @@ class VehicleCounter:
             'direction_b': 0
         }
 
+    def reset(self):
+        """Reset counter state completely for a fresh video session."""
+        self.counted_ids.clear()
+        self.counted_id_classes.clear()
+        self.centroid_history.clear()
+        self.counts = {
+            'total': 0,
+            'car': 0,
+            'motorcycle': 0,
+            'bus': 0,
+            'truck': 0,
+            'direction_a': 0,
+            'direction_b': 0
+        }
+
     def _intersect(self, p1, p2):
         """
         Check if line segment p1->p2 intersects counting line line_start->line_end.
@@ -74,7 +89,7 @@ class VehicleCounter:
                     obj['crossed_counting_line'] = True
 
                     # Increment totals
-                    self.counts['total'] += 1
+                    self.counts['total'] = len(self.counted_ids)
                     target_key = cls_name if cls_name in self.counts else 'car'
                     self.counts[target_key] += 1
 
@@ -96,5 +111,31 @@ class VehicleCounter:
 
         return tracked_objects
 
-    def get_counts(self):
-        return dict(self.counts)
+    def get_counts(self, tracker=None):
+        """
+        Return cumulative line crossing counts.
+        If tracker is provided, synchronizes class breakdown with the tracker's
+        temporally stabilized vehicle classifications.
+        """
+        if tracker is None:
+            return dict(self.counts)
+
+        # Recalculate class counts using tracker's stabilized classifications
+        reconciled_counts = {
+            'total': len(self.counted_ids),
+            'car': 0,
+            'motorcycle': 0,
+            'bus': 0,
+            'truck': 0,
+            'direction_a': self.counts['direction_a'],
+            'direction_b': self.counts['direction_b']
+        }
+
+        for t_id in self.counted_ids:
+            s_cls = tracker.get_stable_class(t_id) if hasattr(tracker, 'get_stable_class') else self.counted_id_classes.get(t_id, 'car')
+            if s_cls in reconciled_counts:
+                reconciled_counts[s_cls] += 1
+            else:
+                reconciled_counts['car'] += 1
+
+        return reconciled_counts
