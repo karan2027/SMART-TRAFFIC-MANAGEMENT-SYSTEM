@@ -9,6 +9,15 @@ const roadRoutes = require('./routes/roadRoutes');
 const cameraRoutes = require('./routes/cameraRoutes');
 const trafficRoutes = require('./routes/trafficRoutes');
 const analysisRoutes = require('./routes/analysisRoutes');
+const junctionRoutes = require('./routes/junctionRoutes');
+const incidentRoutes = require('./routes/incidentRoutes');
+const hazardRoutes = require('./routes/hazardRoutes');
+const violationRoutes = require('./routes/violationRoutes');
+const anprRoutes = require('./routes/anprRoutes');
+const greenCorridorRoutes = require('./routes/greenCorridorRoutes');
+const predictionRoutes = require('./routes/predictionRoutes');
+const alertRoutes = require('./routes/alertRoutes');
+const telemetryRoutes = require('./routes/telemetryRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -38,11 +47,10 @@ if (process.env.CORS_ORIGIN) {
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (e.g. mobile apps, curl, server-to-server) or matched origins
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(null, true); // Permissive in dev fallback, logged
+      callback(null, true); // Permissive in dev fallback
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -53,7 +61,7 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Serve static data directories (videos and outputs) for frontend preview
+// Serve static data directories (videos, outputs, evidence)
 const dataDir = path.resolve(__dirname, '../../data');
 app.use('/data', express.static(dataDir));
 app.use('/videos', express.static(path.join(dataDir, 'videos')));
@@ -64,12 +72,23 @@ app.use('/api/roads', roadRoutes);
 app.use('/api/cameras', cameraRoutes);
 app.use('/api/traffic', trafficRoutes);
 app.use('/api/analysis', analysisRoutes);
+app.use('/api/junctions', junctionRoutes);
+app.use('/api/incidents', incidentRoutes);
+app.use('/api/hazards', hazardRoutes);
+app.use('/api/violations', violationRoutes);
+app.use('/api/anpr', anprRoutes);
+app.use('/api/corridors', greenCorridorRoutes);
+app.use('/api/predictions', predictionRoutes);
+app.use('/api/alerts', alertRoutes);
+app.use('/api/telemetry', telemetryRoutes);
 
-// Health check endpoint
+// System Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    system: 'Intelligent Traffic Management System - Stage 1 Backend',
+    system: 'Advanced Intelligent Traffic Management System (AITMS)',
+    version: '3.0.0',
+    stage: 'Stage 3: Road Safety, Incident Response & City-Scale Autonomous Mobility',
     uptime: process.uptime(),
     timestamp: new Date().toISOString()
   });

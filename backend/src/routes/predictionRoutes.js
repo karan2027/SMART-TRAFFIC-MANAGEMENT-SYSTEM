@@ -1,0 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const predictionController = require('../controllers/predictionController');
+
+router.get('/', predictionController.getPredictions);
+router.post('/', predictionController.recordPrediction);
+
+module.exports = router;
