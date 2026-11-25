@@ -1,0 +1,28 @@
+{
+  "name": "smart-traffic-management-system",
+  "version": "1.0.0",
+  "description": "Production-grade Hybrid Edge + Cloud Smart Traffic Management System with adaptive signal control, emergency green-corridor preemption, and Gemini AI corridor forecasting.",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "smart-traffic",
+    "hybrid-edge-cloud",
+    "gemini-ai",
+    "vercel",
+    "wcag-aa",
+    "vitest"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.0.0",
+    "jsdom": "^25.0.1",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -5,6 +5,7 @@
 
 # Node dependencies & build artifacts
 node_modules/
+coverage/
 dist/
 build/
 npm-debug.log*

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CorridorFlow AI — Hybrid Edge + Cloud Smart Traffic Management</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">STMS</span>
+        <div>
+          <h1>CorridorFlow AI</h1>
+          <p class="subtitle">Hybrid Edge + Cloud Smart Traffic Management System</p>
+        </div>
+      </div>
+      <div class="header-status" aria-live="polite">
+        <span id="connectivity-badge" class="status-pill status-online">Link: Online</span>
+        <span id="route-badge" class="status-pill status-edge">Engine: Edge</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="scenario-nav" aria-label="Traffic Scenarios">
+    <div class="nav-inner" id="scenario-buttons" role="group" aria-label="Select traffic simulation scenario">
+      <button type="button" class="scenario-btn is-active" data-scenario="normal-flow" aria-pressed="true">Normal Flow</button>
+      <button type="button" class="scenario-btn" data-scenario="rush-hour" aria-pressed="false">Rush Hour</button>
+      <button type="button" class="scenario-btn" data-scenario="ambulance-corridor" aria-pressed="false">Ambulance Corridor</button>
+      <button type="button" class="scenario-btn" data-scenario="rain-visibility" aria-pressed="false">Rain &amp; Visibility</button>
+      <button type="button" class="scenario-btn" data-scenario="signal-fault" aria-pressed="false">Signal Fault</button>
+      <button type="button" class="scenario-btn" data-scenario="offline-mode" aria-pressed="false">Offline Resilience</button>
+    </div>
+  </nav>
+
+  <main id="main-content" class="dashboard" tabindex="-1">
+    <section class="panel controls-panel" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Operator Policy &amp; Incident Dispatch</h2>
+      <form id="control-form" class="control-form" novalidate>
+        <div class="control-row">
+          <div class="field">
+            <label for="policy-select">Hybrid Routing Policy</label>
+            <select id="policy-select" name="policy">
+              <option value="auto">Auto Hybrid (Edge + Cloud AI)</option>
+              <option value="edge">Force Edge / Local Only</option>
+              <option value="cloud">Force Cloud AI Forecast</option>
+            </select>
+          </div>
+
+          <div class="field checkbox-field">
+            <input type="checkbox" id="offline-toggle" name="offline" />
+            <label for="offline-toggle">Simulate Offline Backhaul (0 B Egress)</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="incident-notes">Operator Incident / Corridor Notes</label>
+          <div class="note-input-row">
+            <input
+              type="text"
+              id="incident-notes"
+              name="incidentNotes"
+              maxlength="400"
+              placeholder="e.g., Ambulance northbound, lane closure at Civic Square..."
+              autocomplete="off"
+            />
+            <button type="submit" id="analyze-btn" class="primary-btn">Run Signal Plan</button>
+          </div>
+          <p id="input-error" class="error-text" role="alert" hidden></p>
+        </div>
+      </form>
+
+      <div class="decision-banner" aria-live="polite">
+        <strong id="decision-title">LOCAL_OPTIMAL_EDGE</strong>
+        <p id="decision-explanation">Normal corridor load: handled locally on the Edge with sub-millisecond adaptive timing.</p>
+      </div>
+    </section>
+
+    <section class="panel telemetry-panel" aria-labelledby="telemetry-heading">
+      <h2 id="telemetry-heading">Live Corridor Telemetry</h2>
+      <div class="kpi-grid" aria-live="polite">
+        <article class="kpi-card">
+          <h3>Avg Wait Reduction</h3>
+          <p class="kpi-value" id="kpi-wait">--%</p>
+        </article>
+        <article class="kpi-card">
+          <h3>CO2 Saved</h3>
+          <p class="kpi-value" id="kpi-co2">-- kg/hr</p>
+        </article>
+        <article class="kpi-card">
+          <h3>Fuel Saved</h3>
+          <p class="kpi-value" id="kpi-fuel">-- L/hr</p>
+        </article>
+        <article class="kpi-card">
+          <h3>Decision Latency</h3>
+          <p class="kpi-value" id="kpi-latency">-- ms</p>
+        </article>
+        <article class="kpi-card">
+          <h3>Network Egress</h3>
+          <p class="kpi-value" id="kpi-egress">0 B</p>
+        </article>
+        <article class="kpi-card">
+          <h3>Active Vehicles</h3>
+          <p class="kpi-value" id="kpi-vehicles">--</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel intersections-panel" aria-labelledby="intersections-heading">
+      <div class="section-header">
+        <h2 id="intersections-heading">Adaptive Signal Corridor (4 Junctions)</h2>
+        <p class="section-hint">Adjust queues or trigger EMS/Fault per junction to test real-time preemption.</p>
+      </div>
+      <div id="intersections-grid" class="intersections-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="panel advisory-panel" aria-labelledby="advisory-heading">
+      <div class="section-header">
+        <h2 id="advisory-heading">Corridor Advisory &amp; Action Plan</h2>
+        <span id="advisory-source" class="source-tag">Source: Edge</span>
+      </div>
+      <ul id="advisory-list" class="advisory-list" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>CorridorFlow AI &bull; Deterministic Edge Safety + Gemini Cloud Forecasting &bull; WCAG 2.1 AA Compliant</p>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
